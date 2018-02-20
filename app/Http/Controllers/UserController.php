@@ -2,32 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Gallery;
 use Illuminate\Http\Request;
+use App\User;
 
-class GalleryController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        return Gallery::with('pictures')->paginate($request['selectCount']);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function myGalleries(Request $request) {
-        return Gallery::with('pictures')
-                            ->where('author_id', $request['userId'])
-                            ->get();
+        //
     }
 
     /**
@@ -60,6 +47,17 @@ class GalleryController extends Controller
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function findUser(Request $request) {
+
+        return User::where('email', $request['email'])->get();
     }
 
     /**
