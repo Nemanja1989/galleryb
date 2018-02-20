@@ -19,4 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::post('/login', 'Auth\LoginController@authenticate');
 
-Route::middleware('jwt')->get('/proba', 'RegisterController@index');
+Route::post('/register', 'Auth\RegisterController@create');
+
+Route::middleware('jwt')->get('/all-galleries', 'GalleryController@index');
+
+//Route::middleware('jwt')->post('/register', 'RegisterController@create');

@@ -40,6 +40,10 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function asd() {
+        return 'asd';
+    }
+
     public function authenticate(Request $request)
     {
         $creadentials = $request->only([ 'email', 'password']);
