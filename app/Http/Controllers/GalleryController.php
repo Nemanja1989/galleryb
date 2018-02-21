@@ -15,7 +15,14 @@ class GalleryController extends Controller
      */
     public function index(Request $request)
     {
-        return Gallery::with('pictures')->paginate($request['selectCount']);
+        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
+            ->with(['pictures', 'user'])
+            ->paginate($request['selectCount']);
+        /*
+        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
+                                -> with(['pictures'])
+                                ->paginate($request['selectCount']);*/
+        //return Gallery::with(['user', 'pictures'])->paginate($request['selectCount']);
     }
 
     /**
@@ -25,9 +32,10 @@ class GalleryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function myGalleries(Request $request) {
-        return Gallery::with('pictures')
+        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
+                            ->with('pictures')
                             ->where('author_id', $request['userId'])
-                            ->get();
+                            ->paginate($request['selectCount']);
     }
 
     /**
@@ -54,12 +62,14 @@ class GalleryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request)
     {
-        //
+        return Gallery::with(['pictures', 'user', 'comments'])
+                        ->where('galleries.id', $request['galleryId'])
+                        ->get();
     }
 
     /**

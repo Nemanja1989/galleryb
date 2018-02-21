@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
 use Illuminate\Http\Request;
-use App\User;
 
-class UserController extends Controller
+class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,8 +35,26 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $comment = new Comment();
+        $comment->content = $request['comment'];
+        $comment->user_id = $request['user_id'];
+        $comment->gallery_id = $request['gallery_id'];
+
+        $comment->save();
+
+        return $comment;
     }
+
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function loadCommentsByGallery(Request $request) {
+        return Comment::with('user')
+                        ->where('gallery_id', $request['galleryId'])
+                        ->get();
+    }
+
 
     /**
      * Display the specified resource.
@@ -46,18 +64,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::find($id);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function findUser(Request $request) {
-
-        return User::where('email', $request['email'])->get();
+        //
     }
 
     /**

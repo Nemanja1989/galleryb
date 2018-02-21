@@ -23,10 +23,13 @@ Route::post('/register', 'Auth\RegisterController@create');
 
 Route::get('/all-galleries', 'GalleryController@index');
 
-//Route::middleware('jwt')->get('/all-galleries', 'GalleryController@index');
 Route::middleware('jwt')->get('/my-galleries', 'GalleryController@myGalleries');
 
-Route::middleware('jwt')->get('/getUser', 'UserController@findUser');
+Route::middleware('jwt')->get('/singleGallery', 'GalleryController@show');
+
+Route::middleware('jwt')->post('/commentAdd', 'CommentController@store');
+Route::middleware('jwt')->get('/loadCommentsByGallery', 'CommentController@loadCommentsByGallery');
+
 
 
 //Route::middleware('jwt')->post('/register', 'RegisterController@create');
