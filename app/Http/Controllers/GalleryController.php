@@ -16,7 +16,10 @@ class GalleryController extends Controller
     public function index(Request $request)
     {
         return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
-            ->with(['pictures', 'user'])
+            ->with(['pictures'], function ($q) {
+                return $q->whereNotNull('picture_url')->orderBy('order', 'asc');
+            })
+            ->orderBy('galleries.id', 'asc')
             ->paginate($request['selectCount']);
         /*
         return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
@@ -103,6 +106,11 @@ class GalleryController extends Controller
      */
     public function destroy($id)
     {
-        //
+
+        $gallery = Gallery::find($id);
+
+        $gallery->delete();
+
+        return ['success' => true];
     }
 }
