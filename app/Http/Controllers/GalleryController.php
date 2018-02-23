@@ -104,12 +104,15 @@ class GalleryController extends Controller
         $imagesArray = $request->input('images');
 
         foreach ($imagesArray as $image) {
-            $picture = new Picture();
-            $picture->gallery_id = $gallery['id'];
-            $picture->order = $image['order'];
-            $picture->picture_url = $image['picture_url'];
+            // check empty fields and skip them
+            if($image['picture_url']) {
+                $picture = new Picture();
+                $picture->gallery_id = $gallery['id'];
+                $picture->order = $image['order'];
+                $picture->picture_url = $image['picture_url'];
 
-            $picture->save();
+                $picture->save();
+            }
         }
 
         return $gallery;

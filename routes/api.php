@@ -31,7 +31,7 @@ Route::middleware('jwt')->put('/galleries', 'GalleryController@update');
 //comments
 Route::middleware('jwt')->delete('/removeComment/{id}', 'CommentController@destroy');
 Route::middleware('jwt')->post('/commentAdd', 'CommentController@store');
-Route::middleware('jwt')->get('/loadCommentsByGallery', 'CommentController@loadCommentsByGallery');
+Route::get('/loadCommentsByGallery', 'CommentController@loadCommentsByGallery');
 
 Route::middleware('jwt')->get('/getUser', 'UserController@findUser');
 
