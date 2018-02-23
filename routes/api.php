@@ -25,6 +25,8 @@ Route::get('/singleGallery', 'GalleryController@show');
 Route::get('/loadGalleries', 'GalleryController@loadGalleries');
 
 Route::middleware('jwt')->delete('/removeGallery/{id}', 'GalleryController@destroy');
+Route::middleware('jwt')->post('/galleries', 'GalleryController@store');
+Route::middleware('jwt')->put('/galleries', 'GalleryController@update');
 
 //comments
 Route::middleware('jwt')->delete('/removeComment/{id}', 'CommentController@destroy');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Gallery;
+use App\Picture;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
@@ -92,7 +93,26 @@ class GalleryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $gallery = new Gallery();
+
+        $gallery->title = $request->input('title');
+        $gallery->description = $request->input('description');
+        $gallery->author_id = $request->input('user_id');
+
+        $gallery->save();
+
+        $imagesArray = $request->input('images');
+
+        foreach ($imagesArray as $image) {
+            $picture = new Picture();
+            $picture->gallery_id = $gallery['id'];
+            $picture->order = $image['order'];
+            $picture->picture_url = $image['picture_url'];
+
+            $picture->save();
+        }
+
+        return $gallery;
     }
 
     /**
@@ -123,12 +143,35 @@ class GalleryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $gallery = Gallery::find($request['params']['id']);
+
+        $gallery->title = $request['params']['title'];
+        $gallery->description = $request['params']['description'];
+
+        $gallery->save();
+
+        // remove all pictures from gallery
+        $pictures = Picture::where('gallery_id', $request['params']['id'])->get();
+        foreach ($pictures as $picture) {
+            $picture->delete();
+        }
+
+        // add pictures from request
+        $imagesArray = $request['params']['images'];
+        foreach ($imagesArray as $image) {
+            $picture = new Picture();
+            $picture->gallery_id = $gallery['id'];
+            $picture->order = $image['order'];
+            $picture->picture_url = $image['picture_url'];
+
+            $picture->save();
+        }
+
+        return $gallery;
     }
 
     /**
