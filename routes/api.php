@@ -21,10 +21,9 @@ Route::post('/login', 'Auth\LoginController@authenticate');
 Route::post('/register', 'Auth\RegisterController@create');
 
 // not logged user can see
-Route::get('/all-galleries', 'GalleryController@index');
 Route::get('/singleGallery', 'GalleryController@show');
+Route::get('/loadGalleries', 'GalleryController@loadGalleries');
 
-Route::middleware('jwt')->get('/my-galleries', 'GalleryController@myGalleries');
 Route::middleware('jwt')->delete('/removeGallery/{id}', 'GalleryController@destroy');
 
 //comments

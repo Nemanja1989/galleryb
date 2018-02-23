@@ -15,18 +15,54 @@ class GalleryController extends Controller
      */
     public function index(Request $request)
     {
-        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
-            ->with(['pictures'], function ($q) {
-                return $q->whereNotNull('picture_url')->orderBy('order', 'asc');
-            })
-            ->orderBy('galleries.id', 'asc')
-            ->paginate($request['selectCount']);
-        /*
-        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
-                                -> with(['pictures'])
-                                ->paginate($request['selectCount']);*/
-        //return Gallery::with(['user', 'pictures'])->paginate($request['selectCount']);
+        //
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function loadGalleries(Request $request) {
+        $query = Gallery::query();
+        $query->with(['user']);
+
+        // check is author_id set
+        if (!empty($request['author_id'])) {
+            $query->where('author_id', '=', $request['author_id']);
+        }
+
+        if (!empty($request['search_term'])) {
+            $term = $request['search_term'];
+            $query->where(function($q) use ($term) {
+                $q->where('title', 'like', '%' . $term . '%')
+                    ->orWhere('description', 'like', '%' . $term . '%')
+                    ->orWhereHas('user', function($q) use ($term) {
+                        $q->where('first_name', 'like', '%' . $term . '%')
+                            ->orWhere('last_name', 'like', '%' . $term . '%');
+                    });
+            });
+        }
+        // load ordered pictures
+        $query->with(['pictures'], function ($q) {
+            return $q->whereNotNull('picture_url')->orderBy('order', 'asc');
+        });
+
+        $count = $query->count();
+        $galleries = $query->take($request['selectCount'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return compact('count', 'galleries');
+    }
+
+    /*
+     *  area:"all"
+        author_id:"0"
+        search_term:"test"
+        selectCount:"10"
+     */
 
     /**
      * Create a new user instance after a valid registration.
@@ -35,10 +71,7 @@ class GalleryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function myGalleries(Request $request) {
-        return Gallery::join('users', 'users.id', '=', 'galleries.author_id')
-                            ->with('pictures')
-                            ->where('author_id', $request['userId'])
-                            ->paginate($request['selectCount']);
+        //
     }
 
     /**
